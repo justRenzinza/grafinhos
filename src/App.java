@@ -8,10 +8,10 @@ public class App {
     public static void main(String[] args) {
         grafo = new Grafo<>();
 
-        // Carregar grafo do arquivo
-        carregarGrafoDoArquivo("src/libs/entrada.txt");
+        // caminho para ler o arquivo entrada.txt do professor
+        carregarGrafoDoArquivo("libs/entrada.txt");
 
-        // Menu de opções
+        // menu dos crias
         Scanner scanner = new Scanner(System.in);
         boolean rodando = true;
 
@@ -61,46 +61,53 @@ public class App {
             return;
         }
         
-        try (BufferedReader br = new BufferedReader(new FileReader(nomeArquivo))) {
-            System.out.println("Arquivo carregado: " + nomeArquivo);
-    
-            // Leitura do número de cidades
-            int n = Integer.parseInt(br.readLine().trim());
-            System.out.println("Número de cidades: " + n);
-    
-            // Leitura dos nomes das cidades
-            List<String> cidades = new ArrayList<>();
-            for (int i = 0; i < n; i++) {
-                String cidade = br.readLine().trim();
-                cidades.add(cidade);
-                System.out.println("Cidade lida: " + cidade);
+        // basicamente um filtro pra tirar esse "BOM" que tava dando erro
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(arquivo), "UTF-8"))) {
+            // remover o "BOM" 
+            br.mark(1);
+            if (br.read() != 0xFEFF) {
+                br.reset(); // volta 1 caractere
             }
     
-            // Leitura da matriz de adjacência
-            float[][] matrizAdjacencia = new float[n][n];
-            for (int i = 0; i < n; i++) {
-                String[] valores = br.readLine().split(",");
-                for (int j = 0; j < n; j++) {
-                    matrizAdjacencia[i][j] = Float.parseFloat(valores[j].trim());
-                    System.out.print(matrizAdjacencia[i][j] + " ");
+            // feita a verificação, ele começa a ler o arquivo
+            String linha = br.readLine();
+            if (linha != null) {
+                int n = Integer.parseInt(linha.trim());
+                System.out.println("Número de cidades: " + n);
+    
+                List<String> cidades = new ArrayList<>();
+                for (int i = 0; i < n; i++) {
+                    String cidade = br.readLine().trim();
+                    cidades.add(cidade);
+                    System.out.println("Cidade lida: " + cidade);
                 }
-                System.out.println();
-            }
     
-            // Criar o grafo
-            Grafo<String> grafo = new Grafo<>();
-            for (String cidade : cidades) {
-                grafo.adicionaVertice(cidade);
-            }
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    if (matrizAdjacencia[i][j] != 0) {
-                        grafo.adicionarAresta(cidades.get(i), cidades.get(j), matrizAdjacencia[i][j]);
+                // matriz de adjacencia é lida aqui
+                float[][] matrizAdjacencia = new float[n][n];
+                for (int i = 0; i < n; i++) {
+                    String[] valores = br.readLine().split(",");
+                    for (int j = 0; j < n; j++) {
+                        matrizAdjacencia[i][j] = Float.parseFloat(valores[j].trim());
+                        System.out.print(matrizAdjacencia[i][j] + " ");
+                    }
+                    System.out.println();
+                }
+    
+                // grafo criado
+                Grafo<String> grafo = new Grafo<>();
+                for (String cidade : cidades) {
+                    grafo.adicionaVertice(cidade);
+                }
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        if (matrizAdjacencia[i][j] != 0) {
+                            grafo.adicionarAresta(cidades.get(i), cidades.get(j), matrizAdjacencia[i][j]);
+                        }
                     }
                 }
-            }
-            System.out.println("Grafo carregado com sucesso.");
+                System.out.println("Grafo carregado com sucesso.");
     
+            }
         } catch (IOException e) {
             System.out.println("Erro ao ler o arquivo: " + e.getMessage());
         } catch (NumberFormatException e) {
@@ -109,6 +116,7 @@ public class App {
     }
 
     private static void adicionarCidade(Scanner scanner) {
+        // algoritmo pra adicionar cidades com verificações de erro
         System.out.print("Nome da cidade: ");
         String nomeCidade = scanner.nextLine();
         if (grafo.obterVertice(nomeCidade) == null) {
@@ -174,7 +182,7 @@ public class App {
                 for (Vertice<String> vertice : vertices) {
                     pw.println(vertice.getValor());
                 }
-                // Criar e preencher matriz de adjacência
+                // cria a matriz se ainda nao foi criada, e preenche com valores
                 float[][] matrizAdjacencia = new float[vertices.size()][vertices.size()];
                 for (Aresta<String> aresta : grafo.getArestas()) {
                     int origemIndex = vertices.indexOf(aresta.getOrigem());
@@ -221,5 +229,5 @@ public class App {
         } catch (IOException e) {
             System.out.println("Erro ao gravar os arquivos: " + e.getMessage());
         }
-    }
+    } 
 }
