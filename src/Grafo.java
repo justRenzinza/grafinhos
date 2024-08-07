@@ -6,6 +6,7 @@ public class Grafo<T> {
     private List<Aresta<T>> arestas = new ArrayList<>();
 
     public Grafo() {
+        this.vertices = new ArrayList<>();
     }
 
     public List<Vertice<T>> getVertices() {
@@ -221,4 +222,5 @@ public class Grafo<T> {
         }
         return vertices;
     }
+
 }

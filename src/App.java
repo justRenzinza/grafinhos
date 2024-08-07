@@ -3,6 +3,10 @@ import java.util.*;
 
 public class App {
 
+    public App(){
+        
+    }
+    
     private static Grafo<String> grafo;
 
     public static void main(String[] args) {
@@ -61,15 +65,12 @@ public class App {
             return;
         }
         
-        // basicamente um filtro pra tirar esse "BOM" que tava dando erro
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(arquivo), "UTF-8"))) {
-            // remover o "BOM" 
             br.mark(1);
             if (br.read() != 0xFEFF) {
-                br.reset(); // volta 1 caractere
+                br.reset();
             }
     
-            // feita a verificação, ele começa a ler o arquivo
             String linha = br.readLine();
             if (linha != null) {
                 int n = Integer.parseInt(linha.trim());
@@ -82,7 +83,6 @@ public class App {
                     System.out.println("Cidade lida: " + cidade);
                 }
     
-                // matriz de adjacencia é lida aqui
                 float[][] matrizAdjacencia = new float[n][n];
                 for (int i = 0; i < n; i++) {
                     String[] valores = br.readLine().split(",");
@@ -93,8 +93,7 @@ public class App {
                     System.out.println();
                 }
     
-                // grafo criado
-                Grafo<String> grafo = new Grafo<>();
+                grafo = new Grafo<>();
                 for (String cidade : cidades) {
                     grafo.adicionaVertice(cidade);
                 }
@@ -106,13 +105,13 @@ public class App {
                     }
                 }
                 System.out.println("Grafo carregado com sucesso.");
-    
             }
         } catch (IOException e) {
             System.out.println("Erro ao ler o arquivo: " + e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("Erro de formato no arquivo: " + e.getMessage());
         }
+
     }
 
     private static void adicionarCidade(Scanner scanner) {
