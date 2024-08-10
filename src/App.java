@@ -13,7 +13,7 @@ public class App {
         grafo = new Grafo<>();
 
         // caminho para ler o arquivo entrada.txt do professor
-        carregarGrafoDoArquivo("libs/entrada.txt");
+        carregarGrafoDoArquivo("C:\\Users\\Thalison\\Desktop\\grafinhos-main (1)\\grafinhos-main\\libs\\entrada.txt");
 
         // menu dos crias
         Scanner scanner = new Scanner(System.in);
@@ -118,11 +118,13 @@ public class App {
         // algoritmo pra adicionar cidades com verificações de erro
         System.out.print("Nome da cidade: ");
         String nomeCidade = scanner.nextLine();
-        if (grafo.obterVertice(nomeCidade) == null) {
+        if (nomeCidade.isEmpty()) {
+            System.out.println("Nome da cidade não pode ser vazio.");
+        } else if (grafo.obterVertice(nomeCidade) != null) {
+            System.out.println("Cidade já existe.");
+        } else {
             grafo.adicionaVertice(nomeCidade);
             System.out.println("Cidade adicionada.");
-        } else {
-            System.out.println("Cidade já existe.");
         }
     }
 
@@ -133,16 +135,24 @@ public class App {
         String destino = scanner.nextLine();
         System.out.print("Distância: ");
         float distancia = scanner.nextFloat();
-        scanner.nextLine(); 
-        
-        if (grafo.obterVertice(origem) == null) {
-            grafo.adicionaVertice(origem);
+        scanner.nextLine();
+
+        if (origem.isEmpty() || destino.isEmpty()) {
+            System.out.println("Os nomes das cidades de origem e destino não podem ser vazios.");
+        } else if (origem.equals(destino)) {
+            System.out.println("A cidade de origem e destino não podem ser a mesma.");
+        } else if (distancia <= 0) {
+            System.out.println("A distância deve ser um valor positivo.");
+        } else {
+            if (grafo.obterVertice(origem) == null) {
+                grafo.adicionaVertice(origem);
+            }
+            if (grafo.obterVertice(destino) == null) {
+                grafo.adicionaVertice(destino);
+            }
+            grafo.adicionarAresta(origem, destino, distancia);
+            System.out.println("Rota adicionada.");
         }
-        if (grafo.obterVertice(destino) == null) {
-            grafo.adicionaVertice(destino);
-        }
-        grafo.adicionarAresta(origem, destino, distancia);
-        System.out.println("Rota adicionada.");
     }
 
     private static void calcularAGM() {
