@@ -210,7 +210,7 @@ public class Grafo<T> {
         Collections.reverse(resultado);
         return resultado;
     }
-
+//metodo auxiliar na ordenação topológica q percorre os vértices e os adiciona ao resultado em ordem de finalização
     private void ordenacaoTopologicaRecursiva(Vertice<T> vertice, boolean[] visitados, List<Vertice<T>> resultado, int index) {
         visitados[index] = true;
         for (Aresta<T> aresta : this.arestas) {
@@ -224,19 +224,20 @@ public class Grafo<T> {
         }
         resultado.add(vertice);
     }
-
+//encontra os vértices que não têm arestas de entrada
+    //esses vértices são usados como ponto de partida pra ordenação topológica
     private List<Vertice<T>> verticesSemArestaEntrada() {
         List<Vertice<T>> vertices = new ArrayList<>();
         for (Vertice<T> vertice : this.vertices) {
             boolean semAresta = false;
             for (Aresta<T> aresta : this.arestas) {
                 if (aresta.getDestino().equals(vertice)) {
-                    semAresta = true;
+                    semAresta = true; //se encontrar uma aresta de entrada, marca como true e para a busca
                     break;
                 }
             }
             if (!semAresta) {
-                vertices.add(vertice);
+                vertices.add(vertice);//adiciona à lista de vértices sem arestas de entrada
             }
         }
         return vertices;
