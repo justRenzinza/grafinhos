@@ -4,27 +4,36 @@ import java.util.*;
 
 public class Grafo<T> {
 
+    //lista de vértices do grafo, cada um pode ser de qualquer tipo T
     private List<Vertice<T>> vertices = new ArrayList<>();
+    //lista de arestas do grafo, que conectam os vértices
     private List<Aresta<T>> arestas = new ArrayList<>();
 
     public Grafo() {
         this.vertices = new ArrayList<>();
     }
+    //retorna a lista de vértices
 
     public List<Vertice<T>> getVertices() {
         return this.vertices;
     }
+    
+    //retorna a lista de arestas
 
     public List<Aresta<T>> getArestas() {
         return this.arestas;
     }
 
+     //método para adicionar um novo vértice ao grafo
+    //ele cria um novo vértice com o valor dado e o adiciona à lista de vértices
     public Vertice<T> adicionaVertice(T valor) {
         Vertice<T> novo = new Vertice<>(valor);
         this.vertices.add(novo);
         return novo;
     }
 
+    //método para encontrar um vértice na lista pelo valor
+    //ele percorre a lista de vértices e retorna aquele que tiver o valor igual ao parâmetro  q foi passado
     public Vertice<T> obterVertice(T valor) {
         for (Vertice<T> vertice : this.getVertices()) {
             if (vertice.getValor().equals(valor))
@@ -33,6 +42,8 @@ public class Grafo<T> {
         return null;
     }
 
+     //método para adicionar uma nova aresta entre dois vértices
+    //ele também cria os vértices de origem e destino se não existirem ainda no grafo
     public void adicionarAresta(T origem, T destino, float peso) {
         Vertice<T> verticeOrigem = obterVertice(origem);
         if (verticeOrigem == null) {
@@ -46,6 +57,8 @@ public class Grafo<T> {
         this.arestas.add(novaAresta);
     }
 
+    //método que calcula a árvore geradora mínima
+    //ele busca a menor conexão entre todo os vértices, conectando tudo com o menor custo possível
     public Grafo<T> calcularArvoreGeradoraMinima() {
         Grafo<T> arvoreGeradoraMinima = new Grafo<>();
 
@@ -58,9 +71,11 @@ public class Grafo<T> {
             rank.put(vertice, 0);
         }
 
+        //ordena as arestas por peso em ordem crescente
         List<Aresta<T>> arestasOrdenadas = new ArrayList<>(arestas);
         arestasOrdenadas.sort(Comparator.comparingDouble(Aresta::getPeso));
 
+        //percorre as arestas ordenadas para construir a árvore geradora mínima
         for (Aresta<T> aresta : arestasOrdenadas) {
             Vertice<T> u = findSet(parent, aresta.getOrigem());
             Vertice<T> v = findSet(parent, aresta.getDestino());
@@ -73,14 +88,15 @@ public class Grafo<T> {
 
         return arvoreGeradoraMinima;
     }
-
+    
+// método auxiliar para encontrar o conjunto ao qual um vértice pertence
     private Vertice<T> findSet(Map<Vertice<T>, Vertice<T>> parent, Vertice<T> vertice) {
         if (!vertice.equals(parent.get(vertice))) {
             parent.put(vertice, findSet(parent, parent.get(vertice)));
         }
         return parent.get(vertice);
     }
-
+// método auxiliar para unir dois conjuntos diferentes
     private void union(Map<Vertice<T>, Vertice<T>> parent, Map<Vertice<T>, Integer> rank, Vertice<T> u, Vertice<T> v) {
         Vertice<T> rootU = findSet(parent, u);
         Vertice<T> rootV = findSet(parent, v);
@@ -94,7 +110,8 @@ public class Grafo<T> {
             rank.put(rootU, rank.get(rootU) + 1);
         }
     }
-
+// método para calcular o caminho mínimo entre dois vértices 
+    // ele encontra o caminho mais curto do vértice origem até o vértice destino
     public void calcularCaminhoMinimo(T origem, T destino) {
         Vertice<T> verticeOrigem = obterVertice(origem);
         Vertice<T> verticeDestino = obterVertice(destino);
@@ -142,7 +159,7 @@ public class Grafo<T> {
         }
         System.out.println("\nDistância total: " + distancias.get(verticeDestino));
     }
-
+//verifica se o grafo tem ciclos
     public boolean temCiclo() {
         boolean[] visitados = new boolean[this.vertices.size()];
         boolean[] noCaminho = new boolean[this.vertices.size()];
