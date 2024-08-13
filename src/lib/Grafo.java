@@ -169,7 +169,7 @@ public class Grafo<T> {
                 }
             }
         }
-        
+
         if (distancias.get(verticeDestino) == Float.MAX_VALUE) {
             System.out.println("Não há caminho entre " + origem + " e " + destino + ".");
             return;
