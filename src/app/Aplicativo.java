@@ -16,7 +16,7 @@ public class Aplicativo {
         grafo = new Grafo<>();
 
         // caminho para ler o arquivo entrada.txt do professor
-        carregarGrafoDoArquivo("src/lib/entrada.txt");
+        carregarGrafoDoArquivo("grafinhos-main/src/lib/entrada.txt");
 
         // menu dos crias
         Scanner scanner = new Scanner(System.in);
