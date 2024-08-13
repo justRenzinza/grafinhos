@@ -110,7 +110,23 @@ public class Grafo<T> {
             rank.put(rootU, rank.get(rootU) + 1);
         }
     }
-// método para calcular o caminho mínimo entre dois vértices 
+
+    private List<Aresta<T>> pegarDestinos(Vertice<T> v) {
+        List<Aresta<T>> destinos = new ArrayList<>();
+        try {
+            for (Aresta<T> aresta : this.arestas) {
+                if (aresta.getOrigem().equals(v) || aresta.getDestino().equals(v)) {
+                    destinos.add(aresta);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Ocorreu um erro ao pegar destinos: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return destinos;
+    }
+
+    // método para calcular o caminho mínimo entre dois vértices
     // ele encontra o caminho mais curto do vértice origem até o vértice destino
     public void calcularCaminhoMinimo(T origem, T destino) {
         Vertice<T> verticeOrigem = obterVertice(origem);
@@ -134,17 +150,29 @@ public class Grafo<T> {
         while (!fila.isEmpty()) {
             Vertice<T> atual = fila.poll();
 
-            for (Aresta<T> aresta : arestas) {
-                if (aresta.getOrigem().equals(atual)) {
-                    Vertice<T> vizinho = aresta.getDestino();
-                    float novaDistancia = distancias.get(atual) + aresta.getPeso();
-                    if (novaDistancia < distancias.get(vizinho)) {
-                        distancias.put(vizinho, novaDistancia);
-                        anteriores.put(vizinho, atual);
-                        fila.add(vizinho);
-                    }
+            for (Aresta aresta : pegarDestinos(atual)) {
+                Vertice<T> vizinho = aresta.getDestino();
+                float novaDistancia = distancias.get(atual) + aresta.getPeso();
+
+                if (distancias.get(vizinho) > novaDistancia) {
+                    distancias.put(vizinho, novaDistancia);
+                    anteriores.put(vizinho, atual);
+                    fila.add(vizinho);
+                }
+
+                vizinho = aresta.getOrigem();
+                novaDistancia = distancias.get(atual) + aresta.getPeso();
+                if (distancias.get(vizinho) > novaDistancia) {
+                    distancias.put(vizinho, novaDistancia);
+                    anteriores.put(vizinho, atual);
+                    fila.add(vizinho);
                 }
             }
+        }
+        
+        if (distancias.get(verticeDestino) == Float.MAX_VALUE) {
+            System.out.println("Não há caminho entre " + origem + " e " + destino + ".");
+            return;
         }
 
         List<Vertice<T>> caminho = new ArrayList<>();
